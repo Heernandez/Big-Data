@@ -1,0 +1,135 @@
+1) Instalar Java
+2) Probar java
+
+javac hola.java
+java hola
+
+3) Crear entorno
+ir a hadoop > Descargas >
+
+Version 2.10 > Anouncements > En boton download tar.gz copiar direccion de enlace
+
+https://archive.apache.org/dist/hadoop/common/hadoop-2.10.0/hadoop-2.10.0.tar.gz
+
+comando wget dir enlace
+
+luego
+tar -xvzf archivo.tar
+
+ 4) Configurar Entorno
+# Ver opciones de java disponibles
+ update-alternatives --display java
+
+ #Ver formas de llamar/invocar java
+ whereis java
+
+ #ubicacion java
+ /usr/bin/java
+
+ cd ..
+ ls -al
+ nano .bashrc
+ editar para crear una variable 
+ vamos al final del archivo Y AGREGAMOS
+ export JAVA_HOME = $(JAVA_HOME)
+ export JAVA_HOME = /usr/bin/java
+
+ 5) Configurar Hadoop
+ editar de nuevo .bashrc
+
+export HADOOP_HOME = /home/ubuntu/Download/hadoop-2.10.0
+
+en la consola -> export PATH=$PATH:$HADOOP_HOME/bin
+
+
+entrar a carpeta hadoop
+cd etc
+cd hadoop
+ls
+archivos xml son archivos de configuracion
+vamos a trabajar sobre core-site.xml 
+nano core-site.xml
+dentro de etiquetas configuration poner
+
+<property>
+	<name> hadoop.tmp.dir</name>
+	<value>//hadoop/tmp</value>
+	<description>Carpeta de archivos temporales.</description>
+</property>
+<property>
+	<name>fs.defaultFS</name>
+	<value>hdfs://localhost:54310</value>
+	<description>Nombre sistema de archivo por defecto.</description>
+
+</property>
+
+luego vamos a raiz de hadoop
+mkdir -p app/hadoop/tmp
+
+ls -al 
+si carpeta app tiene grupo y usuario root cambiar a ubuntu
+> chown ubuntu:ubuntu app/
+
+luego chmod 750 app/hadoop/tmp/
+
+
+entrar a etc/hadoop
+cp mapred-site.xml.template  mapred-site.xml
+nano mapred-site.xml
+
+copiar denntro de cinfiguracion
+
+<property>
+	<name>mapreduce.jobtracker.address</name>
+	<value>localhost:54311</value>
+	<description>MapReduce job tracker puerto y direccion</description>
+</property>
+
+con esto configuramos donde se ejecuta el mapeo y reduccion
+
+luego
+ nano hdfs-site.xml 
+
+<property>
+	<name>dfs.replication</name>
+	<value>2</value>
+	<description>Replica de bloques por defecto</description>
+</property>
+
+
+<property>
+	<name>dfs.datanode.data.dir</name>
+	<value>/home/ubuntu/hdfs</value>
+	
+</property>
+
+toca crear carpeta hdfs en la raiz
+y permisos chmod 750
+mkdir hdfs
+chmod 750 hdfs/
+
+
+vamos a etc/hadoop/ y ver archivo hadoop-env.sh 
+
+nano hadoop-env.sh
+en el HADOOP_CONF_DIR poner  /home/ubuntu/Download/hadoop-2.10.0/etc/hadoop
+
+y al final del archivo agregar cadenas de usuarios
+
+
+export HDFS_NAMENODE_USER = root
+export HDFS_DATANODE_USER = root
+
+export HDFS_SECONDARYNAMENODE_USER = root
+export YARN_RESOURCEMANAGER_USER = root
+export YARN_NODEMANAGER_USER =root
+
+
+
+
+ 6) Configurar puertos  50030 (JobTracker)
+ En sgrupos seguridad, aboundary > add rule > custom tcp 50030 0.0.0.0/0
+
+
+7) COnfiguracion permisos
+#generacion de claves de acceso
